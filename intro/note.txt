@@ -1,0 +1,23 @@
+node -v
+npm -v
+npm init -y
+npm install express
+
+
+hjhhsakjhhjhjjjjfjfjfjfjfjfjfjfjfjfjfjjf
+ff
+fff
+f
+
+fff
+fff
+f
+
+fff
+f
+
+
+f  fff
+
+
+fff

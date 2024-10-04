@@ -1,0 +1,5 @@
+install MongoDB---> mongodb.com>>Products>>Community Edition>Download 
+
+npm install mongoose
+
+mongod
