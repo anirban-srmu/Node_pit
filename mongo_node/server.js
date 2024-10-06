@@ -84,5 +84,5 @@ app.delete('/products/:id', async(req,res)=>{
 
 //basic server setup
 app.listen(port,()=>{
-    console.log(`server running at https://localhost:${port}`);
+    console.log(`server running at http://localhost:${port}`);
 });
