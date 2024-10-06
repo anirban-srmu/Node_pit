@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const express = require('express')
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
-
+app.use(bodyParser.json());
 
 //mongodb connection string
 const dbURI ='mongodb://localhost:27017/crud';
@@ -20,7 +21,8 @@ mongoose.connect(dbURI,{
 const productSchema =new mongoose.Schema({
     name: {type : String, required : true},
     price: {type : Number, require : true},
-    category: {type : Number, default : 0},
+    category: {type : String},
+    stock: {type: Number, default:0},
     createdOn: {type : Date, default : Date.now}
 });
 
@@ -29,6 +31,7 @@ const Product = mongoose.model('Product',productSchema);
 
 //create a product with POST request
 app.post('/products',async(req,res)=>{
+    
     try{
         const product = new Product({
             name:req.body.name,
@@ -36,10 +39,12 @@ app.post('/products',async(req,res)=>{
             category: req.body.category,
             stock: req.body.stock
         });
+        
         const saveProduct =await product.save();
-        res.status(201).json(savedProduct);
+        res.status(201).json(saveProduct);
     }
     catch(error){
+        console.error('Error creating product:', error);
         res.status(500).send('Error creating product');
     }
 });
@@ -57,7 +62,7 @@ app.get('/products',async(req,res)=>{
 //Update a product with PUT request:
 app.put('/products/:id',async(req,res)=>{
     try{
-        const product =await Product.findByIdAndUpdate(req.body.id,{
+        const product =await Product.findByIdAndUpdate(req.params.id,{
             name: req.body.name,
             price: req.body.price,
             category: req.body.category,
@@ -73,7 +78,7 @@ app.put('/products/:id',async(req,res)=>{
 //delete the product
 app.delete('/products/:id', async(req,res)=>{
     try{
-        const product = await Product.findByIdAndDelete(req.body.id);
+        const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) return res.status(404).send('Product not found');
         res.status(204).send();
     }catch (error){
