@@ -5,4 +5,4 @@ npm install
 npm start 
 ```
 or
-`npx nodemon server.js
+`npx nodemon server.js`
