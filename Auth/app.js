@@ -24,10 +24,10 @@ const User = require('./models/User')
 
 // register user API
 app.post('/register', async(req,res)=>{
-    const {username,password} = req.body;
+    const {username,password,role} = req.body;
 
     try{
-        const newUser = new User({username,password});
+        const newUser = new User({username,password,role});
         await newUser.save();
         res.status(201).json({message:'User registered!!'});
     }catch (error){
@@ -56,7 +56,7 @@ app.post('/login', async(req,res)=>{
     }
 });
 
-//auth function
+//authentication function
 const authenticateJWT = (req,res,next)=>{
     const token = req.header('Authorization');
     console.log(token);
@@ -73,12 +73,23 @@ const authenticateJWT = (req,res,next)=>{
     }
 };
 
+//athorization function
+const authorize = (roles)=>{
+    return (req,res,next)=>{
+        if (!roles.includes(req.user.role)){
+            return res.status(403).json({message: 'Access denied!'});
+        }
+        next();
+    };
+};
+
+
 //CRUD setup
 //product model import
 const Product = require('./models/Product')
 
-//create a product with POST request and auth function
-app.post('/products',authenticateJWT,async(req,res)=>{
+//create a product with POST request and auth function for route protection
+app.post('/products',authenticateJWT,authorize(['admin','super-admin']),async(req,res)=>{
     
     try{
         const product = new Product({
@@ -97,8 +108,8 @@ app.post('/products',authenticateJWT,async(req,res)=>{
     }
 });
 
-//read all products with GET request and auth function
-app.get('/products',authenticateJWT,async(req,res)=>{
+//read all products with GET request and auth function for route protection
+app.get('/products',authenticateJWT,authorize(['admin','user']),async(req,res)=>{
     try{
         const products= await Product.find();
         res.json(products);
@@ -107,8 +118,8 @@ app.get('/products',authenticateJWT,async(req,res)=>{
     }
 });
 
-//Update a product with PUT request and auth function
-app.put('/products/:id',authenticateJWT,async(req,res)=>{
+//Update a product with PUT request and auth function for route protection
+app.put('/products/:id',authenticateJWT,authorize(['admin']),async(req,res)=>{
     try{
         const product =await Product.findByIdAndUpdate(req.params.id,{
             name: req.body.name,
@@ -123,8 +134,8 @@ app.put('/products/:id',authenticateJWT,async(req,res)=>{
     }
 });
 
-//delete the product and auth function
-app.delete('/products/:id',authenticateJWT, async(req,res)=>{
+//delete the product and auth function for route protection
+app.delete('/products/:id',authenticateJWT, authorize(['admin']),async(req,res)=>{
     try{
         const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) return res.status(404).send('Product not found');
