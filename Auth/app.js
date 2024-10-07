@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');//to connect with the env variable in .env file
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json())
+app.use(cors());
 
 //connect to mongodb
 mongoose.connect(process.env.MONGO_URI,{
