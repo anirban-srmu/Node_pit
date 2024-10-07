@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv');//to connect with the env variable in .env file
 
 dotenv.config();
 
@@ -8,7 +8,6 @@ const app = express();
 app.use(express.json())
 
 //connect to mongodb
-
 mongoose.connect(process.env.MONGO_URI,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -20,8 +19,10 @@ mongoose.connect(process.env.MONGO_URI,{
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,()=>console.log(`Server running on port ${PORT}`));
 
+//import model User
 const User = require('./models/User')
 
+// register user API
 app.post('/register', async(req,res)=>{
     const {username,password} = req.body;
 
@@ -34,8 +35,8 @@ app.post('/register', async(req,res)=>{
     }
 });
 
+// login API requires JWT
 const jwt = require('jsonwebtoken');
-
 app.post('/login', async(req,res)=>{
     const {username,password} = req.body;
 
@@ -55,6 +56,7 @@ app.post('/login', async(req,res)=>{
     }
 });
 
+//auth function
 const authenticateJWT = (req,res,next)=>{
     const token = req.header('Authorization');
     console.log(token);
@@ -72,10 +74,10 @@ const authenticateJWT = (req,res,next)=>{
 };
 
 //CRUD setup
-
+//product model import
 const Product = require('./models/Product')
 
-//create a product with POST request
+//create a product with POST request and auth function
 app.post('/products',authenticateJWT,async(req,res)=>{
     
     try{
@@ -95,7 +97,7 @@ app.post('/products',authenticateJWT,async(req,res)=>{
     }
 });
 
-//read all products with GET request
+//read all products with GET request and auth function
 app.get('/products',authenticateJWT,async(req,res)=>{
     try{
         const products= await Product.find();
@@ -105,7 +107,7 @@ app.get('/products',authenticateJWT,async(req,res)=>{
     }
 });
 
-//Update a product with PUT request:
+//Update a product with PUT request and auth function
 app.put('/products/:id',authenticateJWT,async(req,res)=>{
     try{
         const product =await Product.findByIdAndUpdate(req.params.id,{
@@ -121,7 +123,7 @@ app.put('/products/:id',authenticateJWT,async(req,res)=>{
     }
 });
 
-//delete the product
+//delete the product and auth function
 app.delete('/products/:id',authenticateJWT, async(req,res)=>{
     try{
         const product = await Product.findByIdAndDelete(req.params.id);
