@@ -55,7 +55,7 @@ app.get('/products',async(req,res)=>{
         const products= await Product.find();
         res.json(products);
     } catch(error){
-        res.status(500).send('Erroe retriving products')
+    res.status(500).send('Error retriving products')
     }
 });
 
@@ -80,7 +80,7 @@ app.delete('/products/:id', async(req,res)=>{
     try{
         const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) return res.status(404).send('Product not found');
-        res.status(204).send();
+        res.status(204).send('Product is Deleted!');
     }catch (error){
         res.status(500).send('Error deleting product');
     }
