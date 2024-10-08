@@ -5,7 +5,7 @@ const app = express();
 //multer storage setup
 const storage = multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null, 'File_up_multipart_form/uploads/');
+        cb(null, path.join(__dirname, 'uploads'));
     },
     filename:(req, file, cb)=>{
         cb(null, file.originalname);//save the file with original name
