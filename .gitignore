@@ -2,3 +2,5 @@ mongo_node/node_modules/
 intro/node_modules/
 API_mock_data/node_modules/
 Auth/node_modules
+Auth_passport/node_modules
+external_API/node_modules
