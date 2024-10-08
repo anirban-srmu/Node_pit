@@ -116,7 +116,7 @@ app.get('/products',authenticateJWT,authorize(['admin','user']),async(req,res)=>
         const products= await Product.find();
         res.json(products);
     } catch(error){
-    res.status(500).send('Error retriving products')
+    res.status(500).send('Error retriving products');
     }
 });
 

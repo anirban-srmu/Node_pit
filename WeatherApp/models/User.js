@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     username : {type : String, required : true, unique : true, minlength : 5},
     password : {type : String, required : true, minlength : 8},
     lat : {type : Number, default: 12.527580},//latitute for the place
-    lon : {type : Number, default: 76.894669}
+    lon : {type : Number, default: 76.894669},
+    role: {type : String, default: 'user'}
 });
 
 //Hash passoword before saving
