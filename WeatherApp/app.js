@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');//to connect with the env variable in .env file
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 dotenv.config()
 
@@ -39,7 +41,7 @@ app.post('/register',async(req,res)=>{
 });
 
 // login API requires JWT
-const jwt = require('jsonwebtoken');
+
 app.post('/login', async(req,res)=>{
     const {username,password} = req.body;
 
@@ -85,8 +87,6 @@ const authorize = (roles)=>{
         next();
     };
 };
-
-const axios = require('axios');
 
 let cache = {};
 
