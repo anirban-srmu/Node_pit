@@ -105,12 +105,20 @@ async function getWeather(lat,lon){
     return response.data;
 }
 
+app.get('/weather/:lat/:lon',authenticateJWT,authorize(['superuser']),async(req,res)=>{
+    try{
+        //console.log(getWeather(req.params.lat,req.params.lon));
+        getWeather(req.params.lat,req.params.lon).then(data=>res.status(201).json(data));
+    }catch(error){
+        res.status(500).json({message:'Error retriving the Weather'});
+    }
+});
+
 app.get('/weather/:username',authenticateJWT,authorize(['user','superuser']),async(req,res)=>{
     try{
         const user = await User.find({username: req.params.username});
         console.log(user);
-        await console.log(getWeather(user.lat,user.lon));
-        res.json(getWeather(user.lat,user.lon));
+        getWeather(user.lat,req.user.lon).then(data=>res.status(201).json(data));
     }catch(error){
         res.status(500).send('Error retriving the Weather');
     }
