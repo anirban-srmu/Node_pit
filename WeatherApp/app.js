@@ -19,7 +19,8 @@ mongoose.connect(process.env.MONGO_URI,{
 
 //Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,()=>console.log(`Server running on port ${PORT}`));
+const APP_URI = process.env.APP_URI;
+app.listen(PORT,()=>console.log(`Server is running at ${APP_URI}:${PORT}`));
 
 //import model User
 const User = require('./models/User')
