@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const username = document.getElementById('loginUsername').value;
         const password = document.getElementById('loginPassword').value;
-
+        
         try {
             const response = await fetch('http://localhost:5000/login', {
                 method: 'POST',
@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (response.ok) {
                 // Store token in local storage
+                localStorage.setItem('username', username);
                 localStorage.setItem('token', data.token);
                 alert('Login successful!');
             } else {
@@ -94,3 +95,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+
+// Get Weather Data User
+weatherFormUser.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    try {
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        if (!token) {
+            alert('Please log in first');
+            return;
+        }
+
+        const response = await fetch(`http://localhost:5000/weather/${username}`, {
+            headers: {
+                'Authorization': `${token}`,
+            }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            // Display weather data
+            document.getElementById('weatherResult').innerHTML = `
+                <h3>Weather Data</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } else {
+            alert(`Error fetching weather: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+    }
+});
+
