@@ -165,3 +165,31 @@ app.get('/weather-forcast/:lat/:lon',authenticateJWT,authorize(['superuser']),as
         res.status(500).json({message:'Error retriving the Weather'});
     }
 });
+
+const WebSocket = require('ws');
+
+const ws = new WebSocket.Server({port:8080});
+ws.on('connection', ws=>{
+    let userName = null;
+    ws.send("Welcome! Please provide your username:")
+    // const user = await User.findOne({username: req.params.username});
+    ws.on('message',async message=>{
+        if (!userName){
+            userName = message.toString();
+            ws.send(`Hello, please provide you lat lon as: lat,lon`);
+        }else{
+            const[lat,lon]=message.toString().split(',');
+            if (lat && lon){
+                const weatherData= await getWeather(lat,lon);
+                console.log(weatherData);
+                ws.send(JSON.stringify(weatherData));
+            }else{
+                ws.send("Invalid Input!");
+            }
+        }
+        
+    });
+    ws.on('close',()=>{
+        console.log('client disconnected');
+    });
+});
