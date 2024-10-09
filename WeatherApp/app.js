@@ -147,7 +147,7 @@ app.get('/weather/:username',authenticateJWT,authorize(['user','superuser']),asy
     }
 });
 
-app.get('/weather-forcast/:username',authenticateJWT,authorize(['user','superuser']),async(req,res)=>{
+app.get('/weather-forecast/:username',authenticateJWT,authorize(['user','superuser']),async(req,res)=>{
     try{
         const user = await User.findOne({username: req.params.username});
         console.log(user);
@@ -157,7 +157,7 @@ app.get('/weather-forcast/:username',authenticateJWT,authorize(['user','superuse
     }
 });
 
-app.get('/weather-forcast/:lat/:lon',authenticateJWT,authorize(['superuser']),async(req,res)=>{
+app.get('/weather-forecast/:lat/:lon',authenticateJWT,authorize(['superuser']),async(req,res)=>{
     try{
         //console.log(getWeather(req.params.lat,req.params.lon));
         getWeatherForcast(req.params.lat,req.params.lon).then(data=>res.status(201).json(data));

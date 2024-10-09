@@ -94,39 +94,108 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching weather data:', error);
         }
     });
-});
+    
+    // Get Weather Forecast Data
+    weatherForecastForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const lat = document.getElementById('lat').value;
+        const lon = document.getElementById('lon').value;
 
-
-// Get Weather Data User
-weatherFormUser.addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    try {
-        const token = localStorage.getItem('token');
-        const username = localStorage.getItem('username');
-        if (!token) {
-            alert('Please log in first');
-            return;
-        }
-
-        const response = await fetch(`http://localhost:5000/weather/${username}`, {
-            headers: {
-                'Authorization': `${token}`,
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in first');
+                return;
             }
-        });
 
-        const data = await response.json();
-        if (response.ok) {
-            // Display weather data
-            document.getElementById('weatherResult').innerHTML = `
-                <h3>Weather Data</h3>
-                <pre>${JSON.stringify(data, null, 2)}</pre>
-            `;
-        } else {
-            alert(`Error fetching weather: ${data.message}`);
+            const response = await fetch(`http://localhost:5000/weather-forecast/${lat}/${lon}`, {
+                headers: {
+                    'Authorization': `${token}`,
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Display weather data
+                document.getElementById('weatherResult').innerHTML = `
+                    <h3>Weather Data</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } else {
+                alert(`Error fetching weather: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
         }
-    } catch (error) {
-        console.error('Error fetching weather data:', error);
-    }
+    });
+    // Get Weather Data User
+    weatherFormUser.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        try {
+            const token = localStorage.getItem('token');
+            const username = localStorage.getItem('username');
+            if (!token) {
+                alert('Please log in first');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:5000/weather/${username}`, {
+                headers: {
+                    'Authorization': `${token}`,
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Display weather data
+                document.getElementById('weatherResult').innerHTML = `
+                    <h3>Weather Data</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } else {
+                alert(`Error fetching weather: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+        }
+    });
+    
+
+    
+    // Get Weather Forecast Data
+    weatherForcastFormUser.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        try {
+            const token = localStorage.getItem('token');
+            const username = localStorage.getItem('username');
+            if (!token) {
+                alert('Please log in first');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:5000/weather-forecast/${username}`, {
+                headers: {
+                    'Authorization': `${token}`,
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Display weather data
+                document.getElementById('weatherResult').innerHTML = `
+                    <h3>Weather Data</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } else {
+                alert(`Error fetching weather: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+        }
+    });
 });
 
+
+    
