@@ -30,7 +30,7 @@ app.post('/register',async(req,res)=>{
     const {username,password,lat,lon,role} = req.body;
 
     try{
-        const newUser = new User({username,password,lat,lon});
+        const newUser = new User({username,password,lat,lon,role});
         await newUser.save();
         res.status(201).json({message:'User registered!!'});
     }catch (error){
@@ -85,8 +85,11 @@ const authorize = (roles)=>{
         next();
     };
 };
+
 const axios = require('axios');
+
 let cache = {};
+
 async function getWeather(lat,lon){
     if (cache[lat,lon]){
         console.log('Returning cached data');
@@ -94,15 +97,34 @@ async function getWeather(lat,lon){
     }
     const response =await axios.get('https://api.openweathermap.org/data/2.5/weather',{
         params:{
-            lat:12.527580,
-            lon:76.894669,
+            lat:lat,
+            lon:lon,
             appid:'09aa41a19eac8bd7fb5bc4c992ebc7ab'
-        }
+        }    
     });
     //Store the response in cache
     cache[lat,lon]= response.data;
     //cache expires after 10 min
     setTimeout(()=>delete cache[lat,lon],60000);
+    return response.data;
+}
+let cacheForcast={}
+async function getWeatherForcast(lat,lon){
+    if (cacheForcast[lat,lon]){
+        console.log('Returning cached data');
+        return cacheForcast[lat,lon];
+    }
+    const response =await axios.get('https://api.openweathermap.org/data/2.5/forecast',{
+        params:{
+            lat:lat,
+            lon:lon,
+            appid:'09aa41a19eac8bd7fb5bc4c992ebc7ab'
+        }
+    });
+    //Store the response in cache
+    cacheForcast[lat,lon]= response.data;
+    //cache expires after 10 min
+    setTimeout(()=>delete cacheForcast[lat,lon],60000);
     return response.data;
 }
 
@@ -117,10 +139,29 @@ app.get('/weather/:lat/:lon',authenticateJWT,authorize(['superuser']),async(req,
 
 app.get('/weather/:username',authenticateJWT,authorize(['user','superuser']),async(req,res)=>{
     try{
-        const user = await User.find({username: req.params.username});
-        console.log(user);
-        getWeather(user.lat,req.user.lon).then(data=>res.status(201).json(data));
+        const user = await User.findOne({username: req.params.username});
+
+        getWeather(user.lat,user.lon).then(data=>res.status(201).json(data));
     }catch(error){
         res.status(500).send('Error retriving the Weather');
+    }
+});
+
+app.get('/weather-forcast/:username',authenticateJWT,authorize(['user','superuser']),async(req,res)=>{
+    try{
+        const user = await User.findOne({username: req.params.username});
+        console.log(user);
+        getWeatherForcast(user.lat,user.lon).then(data=>res.status(201).json(data));
+    }catch(error){
+        res.status(500).send('Error retriving the Weather');
+    }
+});
+
+app.get('/weather-forcast/:lat/:lon',authenticateJWT,authorize(['superuser']),async(req,res)=>{
+    try{
+        //console.log(getWeather(req.params.lat,req.params.lon));
+        getWeatherForcast(req.params.lat,req.params.lon).then(data=>res.status(201).json(data));
+    }catch(error){
+        res.status(500).json({message:'Error retriving the Weather'});
     }
 });
